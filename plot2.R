@@ -1,6 +1,6 @@
 # Coursera John's Hopkins Exploratory Data Analysis Online Class
-# Course Project 1, code for generating Plot 1
-# Histogram of global active power for Feb 1 and 2, 2007
+# Course Project 1, code for generating Plot 2
+# Line plot of global active power for Feb 1 and 2, 2007
 # FHS Jan 9, 2015
 
 ############################################################
@@ -36,15 +36,20 @@ if (!file.exists(subsetDataFileName)) {
 }
 
 ############################################################
-# Create Histogram (Plot1) and save to PNG file
+# Create 2 day line graphs for sub-metering  (Plot2) 
+# and save to PNG file
 ############################################################
+
+# concatenate date & time in single string
+subsetData$Datetime <- paste(as.character(subsetData$Date), as.character(subsetData$Time), sep=" ")
+# convert date & time to POSIXlt structure
+subsetData$Datetime <- strptime(subsetData$Datetime, "%Y-%m-%d %H:%M:%S")
 
 par(mfrow=c(1,1)) # (1,1) single graph
 
-# create histogram to default display device
-hist(subsetData$Global_active_power, main="Global Active Power",
-     xlab="Global Active Power (kilowatts)",
-     col="red")
-pngFileName <- "plots/plot1.png"
+plot(subsetData$Datetime, subsetData$Global_active_power, type = "l",
+     xlab ="", ylab="Global Active Power (kilowatts)")
+
+pngFileName <- "plots/plot2.png"
 dev.copy(png, file=pngFileName) # copy plot to a png file
 dev.off() # close png file device

@@ -1,6 +1,6 @@
 # Coursera John's Hopkins Exploratory Data Analysis Online Class
-# Course Project 1, code for generating Plot 1
-# Histogram of global active power for Feb 1 and 2, 2007
+# Course Project 1, code for generating Plot 4
+# Combination of 4 plots for Feb 1 and 2, 2007
 # FHS Jan 9, 2015
 
 ############################################################
@@ -36,15 +36,35 @@ if (!file.exists(subsetDataFileName)) {
 }
 
 ############################################################
-# Create Histogram (Plot1) and save to PNG file
+# Create combination of 4 graphs  (Plot4) 
+# and save to PNG file
 ############################################################
 
-par(mfrow=c(1,1)) # (1,1) single graph
+# concatenate date & time in single string
+subsetData$Datetime <- paste(as.character(subsetData$Date), as.character(subsetData$Time), sep=" ")
+# convert date & time to POSIXlt structure
+subsetData$Datetime <- strptime(subsetData$Datetime, "%Y-%m-%d %H:%M:%S")
 
-# create histogram to default display device
-hist(subsetData$Global_active_power, main="Global Active Power",
-     xlab="Global Active Power (kilowatts)",
-     col="red")
-pngFileName <- "plots/plot1.png"
+par(mfrow=c(2,2)) # (2,2) graphs
+
+plot(subsetData$Datetime, subsetData$Global_active_power, type = "l",
+     xlab ="", ylab="Global Active Power")
+
+plot(subsetData$Datetime, subsetData$Voltage, type = "l",
+     xlab ="datetime", ylab="Voltage")
+
+plot(subsetData$Datetime, subsetData$Sub_metering_1, type = "n",
+     xlab ="", ylab="Energy sub metering")
+lines(subsetData$Datetime, subsetData$Sub_metering_1, col="black")
+lines(subsetData$Datetime, subsetData$Sub_metering_2, col="red")
+lines(subsetData$Datetime, subsetData$Sub_metering_3, col="blue")
+# for 480x480 pixel png file to scale properly needed to be explicit with legend x,y location
+legend(x=1170370000, y=40, lty=1, col=c("black","red","blue"),
+       legend = c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"), bty="n", cex=0.8)
+
+plot(subsetData$Datetime, subsetData$Global_reactive_power, type = "l",
+     xlab ="datetime", ylab="Global_reactive_power")
+
+pngFileName <- "plots/plot4.png"
 dev.copy(png, file=pngFileName) # copy plot to a png file
 dev.off() # close png file device
